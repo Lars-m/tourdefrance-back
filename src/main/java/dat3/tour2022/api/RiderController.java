@@ -40,6 +40,7 @@ public class RiderController {
 
   @GetMapping("/scores")
   public List<RiderResponse> getRidersWithScores(){
+
     return riderService.getRidersFullDetail();
   }
 
@@ -48,8 +49,9 @@ public class RiderController {
     return riderService.getRiders(pageable,team);
   }
   @GetMapping("/{id}")
-  public RiderResponse getRider(@PathVariable int id){
-    return riderService.getRider(id);
+  public RiderResponse getRider(@PathVariable int id,@RequestParam(value= "addStages", required = false,defaultValue = "false") boolean addStages){
+
+    return riderService.getRider(id,addStages);
   }
 
   @GetMapping(value = "/count", produces = "application/json")

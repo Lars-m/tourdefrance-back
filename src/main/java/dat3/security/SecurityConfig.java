@@ -7,10 +7,13 @@ import com.nimbusds.jose.proc.SecurityContext;
 import dat3.security.error.CustomOAuth2AccessDeniedHandler;
 import dat3.security.error.CustomOAuth2AuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorizationEventPublisher;
+import org.springframework.security.authorization.SpringAuthorizationEventPublisher;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -33,9 +36,11 @@ import org.springframework.web.filter.CorsFilter;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+
+//REF: https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-
 @Configuration
 public class SecurityConfig {
 
@@ -43,6 +48,12 @@ public class SecurityConfig {
   public PasswordEncoder passwordEncoder() {
     System.out.println("CALLED");
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthorizationEventPublisher authorizationEventPublisher
+          (ApplicationEventPublisher applicationEventPublisher) {
+    return new SpringAuthorizationEventPublisher(applicationEventPublisher);
   }
 
   // Use this to fine tune the CORS headers, if needed (Not required for this semester)
@@ -64,7 +75,8 @@ public class SecurityConfig {
     //This line is added to make the h2-console work (if needed)
     http.headers().frameOptions().disable();
     http
-            .cors().and().csrf().disable()
+            .cors()//Exclude OPTIONS Requests from authorization checks
+            .and().csrf().disable()
 
             .httpBasic(Customizer.withDefaults())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,6 +84,7 @@ public class SecurityConfig {
             .exceptionHandling((exceptions) -> exceptions
                     .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
                     .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler())
+
             )
             .oauth2ResourceServer()
             .jwt()
@@ -107,6 +120,8 @@ public class SecurityConfig {
 
     return http.build();
   }
+
+
 
   @Bean
   public JwtAuthenticationConverter authenticationConverter() {

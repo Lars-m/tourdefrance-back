@@ -7,6 +7,7 @@ import dat3.tour2022.entity.Rider;
 import dat3.tour2022.entity.StageResult;
 import dat3.tour2022.entity.Team;
 import dat3.tour2022.repository.TeamRepository;
+import dat3.tour2022.settings.SharedConstants;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class SetupDevUsers implements ApplicationRunner {
 
-    private final String S1 = "Stage 1";
-    private final String S2 = "Stage 2";
-    private final String S3 = "Stage 3";
+
+    String S1 = SharedConstants.S1;
+    String S2 = SharedConstants.S2;
+    String S3 = SharedConstants.S3;
+
 
     UserWithRolesRepository userWithRolesRepository;
     TeamRepository teamRepository;
@@ -27,8 +30,6 @@ public class SetupDevUsers implements ApplicationRunner {
         this.teamRepository = teamRepository;
         passwordUsedByAll = "test12";
     }
-
-
 
     @Override
     public void run(ApplicationArguments args) {
@@ -83,13 +84,13 @@ public class SetupDevUsers implements ApplicationRunner {
         riderC1.addStageResult(StageResult.builder().stageName(new String(S2)).mountainPoint(0).sprintPoint(3).time(TIME_ALL+5).build());
         riderC1.addStageResult(StageResult.builder().stageName(new String(S3)).mountainPoint(0).sprintPoint(1).time(TIME_ALL+4).build());
 
-        riderB2.addStageResult(StageResult.builder().stageName(new String(S1)).mountainPoint(1).sprintPoint(0).time(TIME_ALL-10).build());
-        riderB2.addStageResult(StageResult.builder().stageName(new String(S2)).mountainPoint(0).sprintPoint(3).time(TIME_ALL-12).build());
-        riderB2.addStageResult(StageResult.builder().stageName(new String(S3)).mountainPoint(0).sprintPoint(1).time(TIME_ALL+11).build());
+        riderC2.addStageResult(StageResult.builder().stageName(new String(S1)).mountainPoint(1).sprintPoint(0).time(TIME_ALL-10).build());
+        riderC2.addStageResult(StageResult.builder().stageName(new String(S2)).mountainPoint(0).sprintPoint(3).time(TIME_ALL-12).build());
+        riderC2.addStageResult(StageResult.builder().stageName(new String(S3)).mountainPoint(0).sprintPoint(1).time(TIME_ALL+11).build());
 
-        riderB3.addStageResult(StageResult.builder().stageName(new String(S1)).mountainPoint(1).sprintPoint(0).time(TIME_ALL-4).build());
-        riderB3.addStageResult(StageResult.builder().stageName(new String(S2)).mountainPoint(0).sprintPoint(2).time(TIME_ALL+1).build());
-        riderB3.addStageResult(StageResult.builder().stageName(new String(S3)).mountainPoint(0).sprintPoint(1).time(TIME_ALL+-14).build());
+        riderC3.addStageResult(StageResult.builder().stageName(new String(S1)).mountainPoint(1).sprintPoint(0).time(TIME_ALL-4).build());
+        riderC3.addStageResult(StageResult.builder().stageName(new String(S2)).mountainPoint(0).sprintPoint(2).time(TIME_ALL+1).build());
+        riderC3.addStageResult(StageResult.builder().stageName(new String(S3)).mountainPoint(0).sprintPoint(1).time(TIME_ALL+-14).build());
 
         teamRepository.save(teamA);
         teamRepository.save(teamB);

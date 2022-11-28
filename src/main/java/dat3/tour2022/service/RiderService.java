@@ -3,9 +3,11 @@ package dat3.tour2022.service;
 import dat3.tour2022.dto.RiderRequest;
 import dat3.tour2022.dto.RiderResponse;
 import dat3.tour2022.entity.Rider;
+import dat3.tour2022.entity.StageResult;
 import dat3.tour2022.entity.Team;
 import dat3.tour2022.repository.RiderRepository;
 import dat3.tour2022.repository.TeamRepository;
+import dat3.tour2022.settings.SharedConstants;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +33,16 @@ public class RiderService {
       Team team = teamRepository.findById(body.getTeamId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Team does not exist"));
       rider.setTeam(team);
     }
-    return new RiderResponse(riderRepository.save(rider),false);
+    //Add all stages to new riders with empty results
+    for(String stageResultName: SharedConstants.stageNames){
+      rider.addStageResult(StageResult.builder().stageName(new String(stageResultName)).build());
+    }
+    return new RiderResponse(riderRepository.save(rider),false,false);
   }
 
   public List<RiderResponse> getRidersFullDetail(){
     List<Rider> riders = riderRepository.findAll();
-    return riders.stream().map(rider -> new RiderResponse(rider,true)).toList();
+    return riders.stream().map(rider -> new RiderResponse(rider,true,false)).toList();
   }
 
   public List<RiderResponse> getRiders(Pageable pageable, String team){
@@ -46,12 +52,12 @@ public class RiderService {
     } else {
       riders = riderRepository.findAll(pageable).toList();
     }
-    return riders.stream().map(r -> new RiderResponse(r,false)).toList();
+    return riders.stream().map(r -> new RiderResponse(r,false,false)).toList();
   }
 
-  public RiderResponse getRider(int id){
+  public RiderResponse getRider(int id,boolean addStages){
     Rider rider = riderRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"No rider found with ID: "+id));
-    return new RiderResponse(rider,false);
+    return new RiderResponse(rider,false,addStages);
   }
 
   public ResponseEntity<String> riderCount(){
@@ -69,7 +75,7 @@ public class RiderService {
     rider.setName(body.getName());
     rider.setCountry(body.getCountry());
     rider.setBelow26(body.isBelow26());
-    return new RiderResponse(riderRepository.save(rider),false);
+    return new RiderResponse(riderRepository.save(rider),false,false);
   }
 
   public void deleteRider(int riderId){

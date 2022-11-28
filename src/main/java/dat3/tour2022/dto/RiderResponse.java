@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,8 +22,9 @@ public class RiderResponse {
   Integer timeTotal;
   Integer mountainPointTotal;
   Integer sprintPointTotal;
+  List<StageResultDTO> stageResults;
 
-  public RiderResponse(Rider rider, boolean includePoints) {
+  public RiderResponse(Rider rider, boolean includePoints, boolean includeStageResults) {
     id = rider.getId();
     name = rider.getName();
     below26 = rider.isBelow26();
@@ -32,6 +35,9 @@ public class RiderResponse {
       timeTotal = rider.getStageResults().stream().mapToInt(sr -> sr.getTime()).sum();
       mountainPointTotal = rider.getStageResults().stream().mapToInt(sr -> sr.getMountainPoint()).sum();
       sprintPointTotal = rider.getStageResults().stream().mapToInt(sr -> sr.getSprintPoint()).sum();
+    }
+    if(includeStageResults){
+      stageResults = rider.getStageResults().stream().map(r->new StageResultDTO(r,false)).toList();
     }
   }
 }

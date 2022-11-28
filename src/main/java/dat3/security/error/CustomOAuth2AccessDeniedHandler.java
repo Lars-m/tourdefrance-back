@@ -22,6 +22,8 @@ public class CustomOAuth2AccessDeniedHandler implements AccessDeniedHandler {
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
           throws IOException {
+
+
     logger.error(e.getLocalizedMessage(), e);
     //logger.debug(e.getLocalizedMessage(), e);
 
